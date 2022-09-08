@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SalesWebMvc.Models;
 using SalesWebMvc.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using SalesWebMvc.Models.ViewModels;
 
 namespace SalesWebMvc.Controllers
 {
@@ -12,10 +9,12 @@ namespace SalesWebMvc.Controllers
     {
 
         private readonly SellerService _sellerService;
+        private readonly DepartamentService _departamentService;
 
-        public SellersController(SellerService sellerService) //injeção de dependência
+        public SellersController(SellerService sellerService, DepartamentService departamentService) //injeção de dependência
         {
             _sellerService = sellerService;
+            _departamentService = departamentService;
         }
 
         public IActionResult Index()
@@ -26,7 +25,9 @@ namespace SalesWebMvc.Controllers
 
         public IActionResult Create() //CRIAÇÃO DO MÉTODO CREATE
         {
-            return View(); //retornando a view
+            var departaments = _departamentService.FindAll(); //BUSCA NO BD todos os departamentos
+            var viewModel = new SellerFormViewModel { Departaments = departaments};
+            return View(viewModel); //retornando a view
         }
 
         [HttpPost] //o Post serve para enviar as info para o BD
