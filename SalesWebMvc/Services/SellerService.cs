@@ -22,6 +22,7 @@ namespace SalesWebMvc.Services
 
         public void Insert(Seller obj) //inserir esse objeto no BD
         {
+            obj.Departament = _context.Departament.First();
             _context.Add(obj); //adiciona o bojeto
             _context.SaveChanges(); //salva o bojeto
         }
