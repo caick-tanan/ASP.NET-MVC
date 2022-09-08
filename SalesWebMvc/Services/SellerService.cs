@@ -19,5 +19,11 @@ namespace SalesWebMvc.Services
         {
             return _context.Seller.ToList(); //acessa a minha fonde de dados relacionado a tabela de vendedores e converter isso para uma lista
         }
+
+        public void Insert(Seller obj) //inserir esse objeto no BD
+        {
+            _context.Add(obj); //adiciona o bojeto
+            _context.SaveChanges(); //salva o bojeto
+        }
     }
 }
