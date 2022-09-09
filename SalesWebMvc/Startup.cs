@@ -50,6 +50,7 @@ namespace SalesWebMvc
             {
                 app.UseDeveloperExceptionPage();
                 seedingService.Seed();
+                app.UseExceptionHandler("/Home/Error");
             }
             else
             {
