@@ -38,6 +38,12 @@ namespace SalesWebMvc.Controllers
         [ValidateAntiForgeryToken] //prevenção de ataques enquanto eu estiver autenticado
         public IActionResult Create(Seller seller)//cria em Seller um novo Seller
         {
+            if (!ModelState.IsValid) //o modelo foi validado ?
+            {
+                var departaments = _departamentService.FindAll();
+                var viewModel = new SellerFormViewModel { Seller = seller, Departaments = departaments };
+                return View(viewModel); //caso não seja validado retorna a propia view enquanto o usuário não preencher corretamente o formulário, caso o JavaScript esteja desativado na página web
+            }
             _sellerService.Insert(seller); //inseriou a pessoa
             return RedirectToAction(nameof(Index));
         }
@@ -101,6 +107,12 @@ namespace SalesWebMvc.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, Seller seller)
         {
+            if (!ModelState.IsValid) //o modelo foi validado ?
+            {
+                var departaments = _departamentService.FindAll();
+                var viewModel = new SellerFormViewModel { Seller = seller, Departaments = departaments };
+                return View(viewModel); //caso não seja validado retorna a propia view enquanto o usuário não preencher corretamente o formulário, caso o JavaScript esteja desativado na página web
+            }
             if (id != seller.Id)
             {
                 RedirectToAction(nameof(Error), new { message = "Id mismatch" });
