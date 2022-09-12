@@ -33,5 +33,24 @@ namespace SalesWebMvc.Services
                 .OrderByDescending(x => x.Date) //Ordem Decrescente
                 .ToListAsync(); //vai ordenar em formato de lista
         }
+
+        public async Task<List<IGrouping<Departament, SalesRecord>>> FindByDateGroupingAsync(DateTime? minDate, DateTime? maxDate) //Quando se usa o GroupBy é necessário usar o Igrouping e passar os campos que serão utilizados
+        {
+            var result = from obj in _context.SalesRecord select obj; //essa declaração pega o SalesRecord que é do tipo Dbset e contruir para mim um objeto result do tipo Iquarible
+            if (minDate.HasValue) //Caso o minDate possua valor
+            {
+                result = result.Where(x => x.Date >= minDate.Value); //vai pegar o objeto que foi contruido por meio do link e comparar com o minDate
+            }
+            if (maxDate.HasValue) //Caso o maxDate possua valor
+            {
+                result = result.Where(x => x.Date <= maxDate.Value); //vai pegar o objeto que foi contruido por meio do link e comparar com o minDate
+            }
+            return await result
+                .Include(x => x.Seller) //faz um join com a tabela de Seller
+                .Include(x => x.Seller.Departament) //faz um join com a tabela de Departament
+                .OrderByDescending(x => x.Date) //Ordem Decrescente por data
+                .GroupBy(x => x.Seller.Departament) //vai agrupar por departamento
+                .ToListAsync(); //vai ordenar em formato de lista
+        }
     }
 }
