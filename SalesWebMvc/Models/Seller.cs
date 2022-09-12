@@ -9,19 +9,16 @@ namespace SalesWebMvc.Models
     {
         public int Id { get; set; }
 
+        [Required(ErrorMessage = "{0} required")] //Campo obrigatório - a chave {0} indica o nome pois é o primeiro atributo
+        [StringLength(60, MinimumLength = 3, ErrorMessage = "{0} size should be between {2} and {1}")] //Define o tamanho do nome 
+        public string Name { get; set; }
 
         [Required(ErrorMessage = "{0} required")]
         [EmailAddress(ErrorMessage = "Enter a valid email")]
         [DataType(DataType.EmailAddress)]//Gera um link para o email automaticamente
         public string Email { get; set; }
 
-
-        [Required(ErrorMessage = "{0} required")] //Campo obrigatório - a chave {0} indica o nome pois é o primeiro atributo
-        [StringLength(60, MinimumLength = 3, ErrorMessage = "{0} size should be between {2} and {1}")] //Define o tamanho do nome 
         [Display(Name = "Birth Date")] //SERVE PARA MUDAR O NOME NA WEB E NÃO DEIXAR JUNTO O NOME IGUAL NA VARIÁVEL
-        public string Name { get; set; }
-
-
         [Required(ErrorMessage = "{0} required")]
         [DataType(DataType.Date)] //Apenas ano, mês e dia
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")] //Define a data no formato dia, mês e ano
@@ -66,3 +63,4 @@ namespace SalesWebMvc.Models
         }
     }
 }
+

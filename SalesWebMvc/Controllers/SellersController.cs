@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using SalesWebMvc.Services.Exceptions;
 using System.Diagnostics;
 using System;
+using System.Threading.Tasks;
 
 namespace SalesWebMvc.Controllers
 {
@@ -21,40 +22,40 @@ namespace SalesWebMvc.Controllers
             _departamentService = departamentService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var list = _sellerService.FindAll(); //vai retornar uma lista de service
+            var list = await _sellerService.FindAllAsync(); //vai retornar uma lista de service
             return View(list);
         }
 
-        public IActionResult Create() //CRIAÇÃO DO MÉTODO CREATE
+        public async Task<IActionResult> Create() //CRIAÇÃO DO MÉTODO CREATE
         {
-            var departaments = _departamentService.FindAll(); //BUSCA NO BD todos os departamentos
+            var departaments = await _departamentService.FindAllAsync(); //BUSCA NO BD todos os departamentos
             var viewModel = new SellerFormViewModel { Departaments = departaments };
             return View(viewModel); //retornando a view
         }
 
         [HttpPost] //o Post serve para enviar as info para o BD
         [ValidateAntiForgeryToken] //prevenção de ataques enquanto eu estiver autenticado
-        public IActionResult Create(Seller seller)//cria em Seller um novo Seller
+        public async Task<IActionResult> Create(Seller seller)//cria em Seller um novo Seller
         {
             if (!ModelState.IsValid) //o modelo foi validado ?
             {
-                var departaments = _departamentService.FindAll();
+                var departaments = await _departamentService.FindAllAsync();
                 var viewModel = new SellerFormViewModel { Seller = seller, Departaments = departaments };
                 return View(viewModel); //caso não seja validado retorna a propia view enquanto o usuário não preencher corretamente o formulário, caso o JavaScript esteja desativado na página web
             }
-            _sellerService.Insert(seller); //inseriou a pessoa
+            await _sellerService.InsertAsync(seller); //inseriou a pessoa
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not provided"});
             }
-            var obj = _sellerService.FindyById(id.Value); //busquei no BD
+            var obj = await _sellerService.FindByIdAsync(id.Value); //busquei no BD
             if (id == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not found" });
@@ -65,19 +66,19 @@ namespace SalesWebMvc.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            _sellerService.Remove(id);
+            await _sellerService.RemoveAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not providev" });
             }
-            var obj = _sellerService.FindyById(id.Value); //busquei no BD
+            var obj = await _sellerService.FindByIdAsync(id.Value); //busquei no BD
             if (id == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not found" });
@@ -86,30 +87,30 @@ namespace SalesWebMvc.Controllers
             return View(obj);
         }
 
-        public IActionResult Edit(int? id) //função para editar
+        public async Task<IActionResult> Edit(int? id) //função para editar
         {
             if (id == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not provided" });
             }
-            var obj = _sellerService.FindyById(id.Value);
+            var obj = await _sellerService.FindByIdAsync(id.Value);
             if (obj == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not found" });
             }
 
-            List<Departament> departaments = _departamentService.FindAll();
+            List<Departament> departaments = await _departamentService.FindAllAsync();
             SellerFormViewModel viewModel = new SellerFormViewModel { Seller = obj, Departaments = departaments };
             return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, Seller seller)
+        public async Task<IActionResult> Edit(int id, Seller seller)
         {
             if (!ModelState.IsValid) //o modelo foi validado ?
             {
-                var departaments = _departamentService.FindAll();
+                var departaments = await _departamentService.FindAllAsync();
                 var viewModel = new SellerFormViewModel { Seller = seller, Departaments = departaments };
                 return View(viewModel); //caso não seja validado retorna a propia view enquanto o usuário não preencher corretamente o formulário, caso o JavaScript esteja desativado na página web
             }
@@ -119,7 +120,7 @@ namespace SalesWebMvc.Controllers
             }
             try
             {
-                _sellerService.Update(seller);
+                await _sellerService.UpdateAsync(seller);
                 return RedirectToAction(nameof(Index));
             }
             catch (ApplicationException e)
